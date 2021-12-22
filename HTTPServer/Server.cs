@@ -16,6 +16,7 @@ namespace HTTPServer
         public Server(int portNumber, string redirectionMatrixPath)
         {
             //TODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
+            this.LoadRedirectionRules(redirectionMatrixPath);
             //TODO: initialize this.serverSocket
             this.port = portNumber;
             this.serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
