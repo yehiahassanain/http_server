@@ -37,32 +37,77 @@ namespace HTTPServer
 
         public Request(string requestString)
         {
+            headerLines = new Dictionary<string, string>();
             this.requestString = requestString;
         }
         /// <summary>
         /// Parses the request string and loads the request line, header lines and content, returns false if there is a parsing error
         /// </summary>
         /// <returns>True if parsing succeeds, false otherwise.</returns>
-        public bool ParseRequest()
+
+        string[] seperate_Request;
+        string[] check_num_blankline;
+          public bool ParseRequest()
         {
-            throw new NotImplementedException();
-
-            //TODO: parse the receivedRequest using the \r\n delimeter   
-
+            //throw new NotImplementedException();
+ 
+            //TODO: parse the receivedRequest using the \r\n delimeter
+            //bakr
+            string[] parse_receivedrequest =new String[] { "\r\n" };
+            requestLines = requestString.Split(parse_receivedrequest,StringSplitOptions.None);
+            check_num_blankline = requestString.Split('\r');
+            string Request_Line = requestLines[0];
+             seperate_Request = Request_Line.Split(' ');
             // check that there is atleast 3 lines: Request line, Host Header, Blank line (usually 4 lines with the last empty line for empty content)
-
+            if (requestLines.Length < 3)
+            {
+                return false;
+            }
             // Parse Request line
+            this.relativeURI = seperate_Request[1];
+            this.relativeURI=this.relativeURI.Remove(0,1);
 
+            bool validate_parserequestline = ParseRequestLine();
+            bool URI = ValidateIsURI(relativeURI);
             // Validate blank line exists
-
+            bool blank_line = ValidateBlankLine();
+            if ((!validate_parserequestline) || (!URI) || (!blank_line))
+            {
+                return false;
+            }
+            else
+                return true;
             // Load header lines into HeaderLines dictionary
-        }
-
+            bool header = LoadHeaderLines();
+            }
+ 
         private bool ParseRequestLine()
         {
-            throw new NotImplementedException();
+           
+            if (!seperate_Request[0].Equals("GET"))
+            {
+               return false;
+            }
+            if (seperate_Request[2].Equals("HTTP/0.9"))
+            {
+                this.httpVersion = HTTPVersion.HTTP09;
+                return true;
+            }
+            else if (seperate_Request[2].Equals("HTTP/1.0"))
+            {
+                this.httpVersion = HTTPVersion.HTTP10;
+                return true; 
+            }
+            else if (seperate_Request[2].Equals("HTTP/1.1"))
+            {
+                this.httpVersion = HTTPVersion.HTTP11;
+                return true;
+            }
+            else
+                return false;
+ 
         }
-
+ 
         private bool ValidateIsURI(string uri)
         {
             return Uri.IsWellFormedUriString(uri, UriKind.RelativeOrAbsolute);
@@ -70,13 +115,24 @@ namespace HTTPServer
 
         private bool LoadHeaderLines()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            for (int i = 1; i < requestLines.Length - 2; i++)
+            {
+                string[] separte_header = requestLines[i].Split(':');
+                headerLines.Add(separte_header[0], separte_header[1]);
+            }
+            return true;
         }
+
 
         private bool ValidateBlankLine()
         {
-            throw new NotImplementedException();
+            //return requestLines.Contains(string.Empty);
+            if (check_num_blankline.Length>=2)
+                return true;
+            else
+                return false;
         }
-
+ 
     }
 }
