@@ -84,7 +84,7 @@ namespace HTTPServer
         private bool ParseRequestLine()
         {
            
-            if (!seperate_Request[0].Equals("GET"))
+            if (!seperate_Request[0].Equals(RequestMethod.GET.ToString()))
             {
                return false;
             }
