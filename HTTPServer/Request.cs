@@ -71,20 +71,26 @@ namespace HTTPServer
             bool URI = ValidateIsURI(relativeURI);
             // Validate blank line exists
             bool blank_line = ValidateBlankLine();
-            if ((!validate_parserequestline) || (!URI) || (!blank_line))
+            bool header = LoadHeaderLines();
+            //if (seperate_Request[0].Equals("POST"))
+            //{
+            //    contentLines[0] = requestLines[3];
+            //}
+            if ((!validate_parserequestline) || (!URI) || (!blank_line)||(!header))
             {
                 return false;
             }
             else
                 return true;
             // Load header lines into HeaderLines dictionary
-            bool header = LoadHeaderLines();
             }
  
         private bool ParseRequestLine()
         {
            
-            if (!seperate_Request[0].Equals(RequestMethod.GET.ToString()))
+            if (!seperate_Request[0].Equals(RequestMethod.GET.ToString())||
+                !seperate_Request[0].Equals(RequestMethod.POST.ToString())||
+                !seperate_Request[0].Equals(RequestMethod.HEAD.ToString()))
             {
                return false;
             }
@@ -121,6 +127,10 @@ namespace HTTPServer
                 string[] separte_header = requestLines[i].Split(':');
                 headerLines.Add(separte_header[0], separte_header[1]);
             }
+            //if (seperate_Request[0].Equals("POST"))
+            //{
+            //    headerLines.Add("Content-Length", contentLines[0]);
+            //}
             return true;
         }
 
